@@ -45,11 +45,11 @@ def getNextTrainTime(trainJSON):
 	if ("Trains" in trainJSON):
 		for train in trainJSON["Trains"]:
 			if (train["DestinationCode"] == DESTINATION_STATION_ID and train["Line"] == DESTINATION_STATION_LINE):
-				return train["Min"]
+				return int(train["Min"])
 	elif ("Error" in trainJSON):
 		nextTrainTime = -99
 
-	return nextTrainTime
+	return int(nextTrainTime)
 
 #####
 # TODO description
