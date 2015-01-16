@@ -25,22 +25,31 @@ def getTrainData():
 	# TODO Handle network error display error and
 	# return empty Trains JSON object
 	apiUrl = "https://api.wmata.com/StationPrediction.svc/json/GetPrediction/" + STATION_ID + "?api_key=" + os.environ.get("WMATA_API_KEY")
-	r = requests.get(apiUrl)
-	return r.json()
+	try:
+		r = requests.get(apiUrl)
+		return r.json()
+	except:
+		# TODO Indicate a network error on the display
+		return { "Error": "" }
 
 #####
 # Get the time of the next train arrival, could be:
 #
-# -1 Unknown
+# -99 Network error
+# -1  Unknown
 # ARR Arriving
 # BRD Boarding 
 # >0  Minutes until it arrives
 #####
 def getNextTrainTime(trainJSON):
 	nextTrainTime = -1
-	for train in trainJSON["Trains"]:
-		if (train["DestinationCode"] == DESTINATION_STATION_ID and train["Line"] == DESTINATION_STATION_LINE):
-			return train["Min"]
+	if ("Trains" in trainJSON):
+		for train in trainJSON["Trains"]:
+			if (train["DestinationCode"] == DESTINATION_STATION_ID and train["Line"] == DESTINATION_STATION_LINE):
+				return train["Min"]
+	else:
+		if ("Error" in trainJSON):
+			nextTrainTime = -99
 
 	return nextTrainTime
 
