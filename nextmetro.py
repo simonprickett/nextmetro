@@ -13,7 +13,7 @@ import os
 import requests
 import schedule
 import time
-import unicornhat as UH
+#import unicornhat as UH
 
 STATION_ID = "N06"
 DESTINATION_STATION_ID = "G05"
@@ -45,7 +45,13 @@ def getNextTrainTime(trainJSON):
 	if ("Trains" in trainJSON):
 		for train in trainJSON["Trains"]:
 			if (train["DestinationCode"] == DESTINATION_STATION_ID and train["Line"] == DESTINATION_STATION_LINE):
-				return int(train["Min"])
+				try:
+					nextTrainTime = int(train["Min"])
+				except:
+					# Train is arriving or boarding
+					nextTrainTime = 0
+
+				return nextTrainTime
 	elif ("Error" in trainJSON):
 		nextTrainTime = -99
 
@@ -78,16 +84,16 @@ def updateDisplay():
 		r = 255
 		g = 255
 		print "Not much time - " + str(nextTime) + " mins"
-	elif (nextTime >= 1 and nextTime <= 5):
+	elif (nextTime >= 0 and nextTime <= 5):
 		# No chance
 		r = 255
 		print "Not enough time - " + str(nextTime) + " mins"
 
-	for y in range(8):
-		for x in range(8):
-			UH.set_pixel(x, y, r, g, b)
-
-	UH.show()
+#	for y in range(8):
+#		for x in range(8):
+#			UH.set_pixel(x, y, r, g, b)
+#
+#	UH.show()
 
 #####
 # Entry Point
