@@ -14,7 +14,7 @@ import requests
 import schedule
 import time
 
-STATION_ID = "N04"
+STATION_ID = "N06"
 DESTINATION_STATION_ID = "G05"
 DESTINATION_STATION_LINE = "SV"
 
