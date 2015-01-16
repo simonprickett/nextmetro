@@ -22,6 +22,8 @@ DESTINATION_STATION_LINE = "SV"
 # Get train departure JSON data from WMATA API
 #####
 def getTrainData():
+	# TODO Handle network error display error and
+	# return empty Trains JSON object
 	apiUrl = "https://api.wmata.com/StationPrediction.svc/json/GetPrediction/" + STATION_ID + "?api_key=" + os.environ.get("WMATA_API_KEY")
 	r = requests.get(apiUrl)
 	return r.json()
@@ -52,6 +54,7 @@ if (not "WMATA_API_KEY" in os.environ):
 	print "Please set environment variable WMATA_API_KEY with your API key."
 	exit(1)
 else:
+	updateDisplay()
 	schedule.every(60).seconds.do(updateDisplay)
 	while True:
 		schedule.run_pending()
