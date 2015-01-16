@@ -14,7 +14,9 @@ import requests
 import schedule
 import time
 
-STATION_ID = "N06"
+STATION_ID = "N04"
+DESTINATION_STATION_ID = "G05"
+DESTINATION_STATION_LINE = "SV"
 
 #####
 # Get train departure JSON data from WMATA API
@@ -25,27 +27,32 @@ def getTrainData():
 	return r.json()
 
 #####
-# Get the time of the next train
+# Get the time of the next train arrival, could be:
+#
+# -1 Unknown
+# ARR Arriving
+# BRD Boarding 
+# >0  Minutes until it arrives
 #####
 def getNextTrainTime(trainJSON):
 	nextTrainTime = -1
 	for train in trainJSON["Trains"]:
-		# https://developer.wmata.com/docs/services/547636a6f9182302184cda78/operations/547636a6f918230da855363f
+		if (train["DestinationCode"] == DESTINATION_STATION_ID and train["Line"] == DESTINATION_STATION_LINE):
+			return train["Min"]
 
 	return nextTrainTime
+
+def updateDisplay():
+	print getNextTrainTime(getTrainData())
 
 #####
 # Entry Point
 #####
-
 if (not "WMATA_API_KEY" in os.environ):
 	print "Please set environment variable WMATA_API_KEY with your API key."
 	exit(1)
 else:
-	getNextTrainTime(getTrainData())
-
-
-#schedule.every(30).seconds.do(updateDisplay)
-#while True:
-#	schedule.run_pending()
-#	time.sleep(1)
+	schedule.every(60).seconds.do(updateDisplay)
+	while True:
+		schedule.run_pending()
+		time.sleep(1)
