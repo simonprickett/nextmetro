@@ -13,7 +13,7 @@ import os
 import requests
 import schedule
 import time
-#import unicornhat as UH
+import unicornhat as UH
 
 STATION_ID = "N06"
 DESTINATION_STATION_ID = "G05"
@@ -89,11 +89,11 @@ def updateDisplay():
 		r = 255
 		print "Not enough time - " + str(nextTime) + " mins"
 
-#	for y in range(8):
-#		for x in range(8):
-#			UH.set_pixel(x, y, r, g, b)
-#
-#	UH.show()
+	for y in range(8):
+		for x in range(8):
+			UH.set_pixel(x, y, r, g, b)
+
+	UH.show()
 
 #####
 # Entry Point
