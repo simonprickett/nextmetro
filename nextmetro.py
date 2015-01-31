@@ -15,9 +15,13 @@ import schedule
 import time
 import unicornhat as UH
 
+API_POLL_INTERVAL = 30
+MAX_CONSECUTIVE_NETWORK_ERRORS = 5
 STATION_ID = "N06"
 DESTINATION_STATION_ID = "G05"
 DESTINATION_STATION_LINE = "SV"
+
+consecutiveNetworkErrors = 0
 
 #####
 # Get train departure JSON data from WMATA API
@@ -60,21 +64,69 @@ def getNextTrainTime(trainJSON):
 #####
 # TODO description
 #####
+def reboot():
+	print "Rebooting as network is not working..."
+
+	ledMatrix = [[1, 0, 0, 0, 0, 0, 0, 1], 
+		     [0, 1, 0, 0, 0, 0, 1, 0], 
+	      	     [0, 0, 1, 0, 0, 1, 0, 0], 
+	             [0, 0, 0, 1, 1, 0, 0, 0], 
+ 		     [0, 0, 0, 1, 1, 0, 0, 0], 
+		     [0, 0, 1, 0, 0, 1, 0, 0], 
+		     [0, 1, 0, 0, 0, 0, 1, 0], 
+		     [1, 0, 0, 0, 0, 0, 0, 1]
+		    ]
+
+	for y in range(8):
+		for x in range(8):
+			UH.set_pixel(x, y, 255 * ledMatrix[y][x], 0, 0)
+
+	UH.show()
+
+	os.system("reboot")
+
+#####
+# TODO description
+#####
 def updateDisplay():
+	global consecutiveNetworkErrors
 	nextTime = getNextTrainTime(getTrainData())
 	r = 0
 	g = 0
 	b = 0
 
+	ledMatrix = [[1, 1, 1, 1, 1, 1, 1, 1], 
+		     [1, 1, 1, 1, 1, 1, 1, 1], 
+	      	     [1, 1, 1, 1, 1, 1, 1, 1], 
+	             [1, 1, 1, 1, 1, 1, 1, 1], 
+ 		     [1, 1, 1, 1, 1, 1, 1, 1], 
+		     [1, 1, 1, 1, 1, 1, 1, 1], 
+		     [1, 1, 1, 1, 1, 1, 1, 1], 
+		     [1, 1, 1, 1, 1, 1, 1, 1]
+		    ]
+
 	if (nextTime == -1):
 		# API does not know
 		b = 255
+		ledMatrix = [[0, 1, 1, 1, 1, 1, 1, 0], 
+			     [0, 1, 1, 1, 1, 1, 1, 0], 
+	      		     [0, 0, 0, 0, 0, 1, 1, 0], 
+	       		     [0, 0, 0, 1, 1, 1, 1, 0], 
+ 		     	     [0, 0, 0, 1, 1, 1, 1, 0], 
+		             [0, 0, 0, 0, 0, 0, 0, 0], 
+		             [0, 0, 0, 1, 1, 0, 0, 0], 
+		             [0, 0, 0, 1, 1, 0, 0, 0]
+		            ]
 		print "Unknown"
 	elif (nextTime == -99):
 		# Network error
 		r = 128
 		b = 128
 		print "Network error"
+		consecutiveNetworkErrors += 1
+
+		if (consecutiveNetworkErrors == MAX_CONSECUTIVE_NETWORK_ERRORS):
+			reboot()
 	elif (nextTime >= 10):
 		# Plenty of time
 		g = 255
@@ -89,21 +141,25 @@ def updateDisplay():
 		r = 255
 		print "Not enough time - " + str(nextTime) + " mins"
 
+	if (nextTime != -99):
+		consecutiveNetworkErrors = 0
+
 	for y in range(8):
 		for x in range(8):
-			UH.set_pixel(x, y, r, g, b)
+			UH.set_pixel(x, y, ledMatrix[y][x]*r, ledMatrix[y][x]*g, ledMatrix[y][x]*b)
 
 	UH.show()
 
 #####
 # Entry Point
 #####
+
 if (not "WMATA_API_KEY" in os.environ):
 	print "Please set environment variable WMATA_API_KEY with your API key."
 	exit(1)
 else:
 	updateDisplay()
-	schedule.every(30).seconds.do(updateDisplay)
+	schedule.every(API_POLL_INTERVAL).seconds.do(updateDisplay)
 	while True:
 		schedule.run_pending()
 		time.sleep(1)
