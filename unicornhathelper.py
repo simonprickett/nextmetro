@@ -133,4 +133,4 @@ def applyTransform(ledMatrix, tranformName, paintDelay):
 #####
 def applyRandomTransform(ledMatrix, paintDelay):
 	# TODO choose a random transform
-	applyTransform(ledMatris, "TODO", paintDelay)
+	applyTransform(ledMatrix, "TODO", paintDelay)
