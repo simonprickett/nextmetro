@@ -41,7 +41,7 @@ _transformNames = [
 # What a simple transform looks like...
 # Remember a step may involve >1 LED...
 # top to bottom line by line
-_testTransform = [
+_testTransform1 = [
 	[ [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1] ],
 	[ [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2], [8, 2] ],
 	[ [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3], [7, 3], [8, 3] ],
@@ -202,13 +202,23 @@ def generateSingleColorMatrix(r, g, b):
 #####
 # TODO description
 #####
-def applyTransform(ledMatrix, tranformName, paintDelay):
+def applyTransform(ledMatrix, transformName, paintDelay):
 	# Check ledMatrix is valid
 	#TODO
 
 	# Check transformName is valid
 	#TODO
-	transformMatrix = _testTransform5
+	if (transformName = "test1"):
+		transformMatrix = _testTransform1
+	elif (transformName = "test2"):
+		transformMatrix = _testTransform2
+	elif (transformName = "test3"):
+		transformMatrix = _testTransform3
+	elif (transformName = "test4"):
+		transformMatrix = _testTransform4
+	elif (transformName = "test5"):
+		transformMatrix = _testTransform5
+
 
 	# Check paint delay is valid
 	if (paintDelay < 0):
@@ -239,3 +249,10 @@ def applyTransform(ledMatrix, tranformName, paintDelay):
 def applyRandomTransform(ledMatrix, paintDelay):
 	# TODO choose a random transform
 	applyTransform(ledMatrix, "TODO", paintDelay)
+
+#####
+# TODO description
+#####
+def clearLEDs():
+	UH.clear()
+	UH.show()
