@@ -27,7 +27,7 @@ consecutiveNetworkErrors = 0
 # Log something with a timestamp
 #####
 def log(logMessage):
-	print logMessage
+	print time.strftime("%c") + ": " + logMessage
 
 #####
 # Get train departure JSON data from WMATA API
@@ -93,6 +93,17 @@ def reboot():
 	os.system("reboot")
 
 #####
+# Clear the display
+#####
+def clearDisplay():
+	for x in range(8):
+		for y in range(8):
+			UH.set_pixel(x, y, 0, 0, 0)
+		
+		UH.show()
+		time.sleep(0.2)
+
+#####
 # TODO description
 #####
 def updateDisplay():
@@ -102,28 +113,9 @@ def updateDisplay():
 	g = 0
 	b = 0
 
-	ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-		     	 [0, 0, 0, 0, 0, 0, 0, 0], 
-	      	     [0, 0, 0, 0, 0, 0, 0, 0], 
-	             [0, 0, 0, 0, 0, 0, 0, 0], 
- 		     	 [0, 0, 0, 0, 0, 0, 0, 0], 
-		     	 [0, 0, 0, 0, 0, 0, 0, 0], 
-		     	 [0, 0, 0, 0, 0, 0, 0, 0], 
-		     	 [0, 0, 0, 0, 0, 0, 0, 0]
-		    	]
-
 	if (nextTime == -1):
 		# API does not know
 		b = 255
-		ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-			     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		     [0, 0, 0, 0, 0, 0, 1, 0], 
-	       		     [0, 0, 0, 1, 1, 1, 1, 0], 
- 		     	     [0, 0, 0, 1, 0, 0, 0, 0], 
-		             [0, 0, 0, 0, 0, 0, 0, 0], 
-		             [0, 0, 0, 1, 0, 0, 0, 0], 
-		             [0, 0, 0, 0, 0, 0, 0, 0]
-		            ]
 		log("Unknown")
 	elif (nextTime == -99):
 		# Network error
@@ -140,128 +132,22 @@ def updateDisplay():
 		log("Lots of time - " + str(nextTime) + " mins")
 	elif (nextTime < 10 and nextTime > 5):
 		# Pushing it
-		r = 255
-		g = 140
-
-		# Show the time remaining
-		if (nextTime == 9):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 1, 1, 1, 1, 1, 1, 0], 
- 		     	     	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 8):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 1, 1, 1, 1, 1, 1, 0], 
- 		     	     	 [0, 1, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 7):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 0, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 0, 0, 0, 0, 1, 0, 0], 
- 		     	     	 [0, 0, 0, 0, 1, 0, 0, 0], 
-		             	 [0, 0, 0, 0, 1, 0, 0, 0], 
-		             	 [0, 0, 0, 0, 1, 0, 0, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 6):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 0, 0], 
-	       		         [0, 1, 0, 0, 0, 0, 0, 0], 
- 		     	     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 1, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-
+		r = 238
+		g = 238
 		log("Not much time - " + str(nextTime) + " mins")
 	elif (nextTime >= 0 and nextTime <= 5):
 		# No chance
 		r = 255
 		log("Not enough time - " + str(nextTime) + " mins")
-
-		if (nextTime == 5):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 0, 0], 
-	       		         [0, 1, 0, 0, 0, 0, 0, 0], 
- 		     	     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 4):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 0, 0, 0, 0, 1, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 1, 1, 1, 1, 1, 1, 0], 
- 		     	     	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 3):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 0, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 0, 0, 0, 0, 0, 1, 0], 
- 		     	     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 2):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-	      		         [0, 0, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 0, 0, 0, 0, 0, 1, 0], 
- 		     	     	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 1, 0, 0, 0, 0, 0, 0], 
-		             	 [0, 1, 1, 1, 1, 1, 1, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 1):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 0, 0, 0, 1, 0, 0, 0], 
-	      		         [0, 0, 0, 1, 1, 0, 0, 0], 
-	       		         [0, 0, 0, 0, 1, 0, 0, 0], 
- 		     	     	 [0, 0, 0, 0, 1, 0, 0, 0], 
-		             	 [0, 0, 0, 0, 1, 0, 0, 0], 
-		             	 [0, 0, 0, 1, 1, 1, 0, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
-		elif (nextTime == 0):
-			ledMatrix = [[0, 0, 0, 0, 0, 0, 0, 0], 
-				     	 [0, 0, 1, 1, 1, 1, 0, 0], 
-	      		         [0, 1, 0, 0, 0, 0, 1, 0], 
-	       		         [0, 1, 0, 0, 0, 0, 1, 0], 
- 		     	     	 [0, 1, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 1, 0, 0, 0, 0, 1, 0], 
-		             	 [0, 0, 1, 1, 1, 1, 0, 0], 
-		             	 [0, 0, 0, 0, 0, 0, 0, 0]
-		            	]
 	if (nextTime != -99):
 		consecutiveNetworkErrors = 0
 
+	clearDisplay()
 	for y in range(8):
 		for x in range(8):
-			if (ledMatrix[y][x] == 1):
-				UH.set_pixel(x, y, 255, 255, 255)
-			else:
-				UH.set_pixel(x, y, r, g, b)
-
-	UH.show()
+			UH.set_pixel(x, y, r, g, b)
+		 	time.sleep(0.05)
+			UH.show()
 
 #####
 # Entry Point
@@ -271,6 +157,7 @@ if (not "WMATA_API_KEY" in os.environ):
 	log("Please set environment variable WMATA_API_KEY with your API key.")
 	exit(1)
 else:
+	UH.brightness(0.3)
 	updateDisplay()
 	schedule.every(API_POLL_INTERVAL).seconds.do(updateDisplay)
 	while True:
