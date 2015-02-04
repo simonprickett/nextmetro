@@ -196,8 +196,10 @@ def generateSingleColorMatrix(r, g, b):
 		return
 
 	singleRow = [[r, g, b], [r, g, b], [r, g, b], [r, g, b], [r, g, b], [r, g, b], [r, g, b], [r, g, b]]
+	altRow = [[g, r, b], [g, r, b], [g, r, b], [g, r, b], [g, r, b], [g, r, b], [g, r, b], [g, r, b]]
 
-	return [singleRow, singleRow, singleRow, singleRow, singleRow, singleRow, singleRow, singleRow]
+	#return [singleRow, singleRow, singleRow, singleRow, singleRow, singleRow, singleRow, singleRow]
+	return [singleRow, altRow, singleRow, altRow, singleRow, altRow, singleRow, altRow]
 
 #####
 # TODO description
