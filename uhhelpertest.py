@@ -27,6 +27,9 @@ ledHelper.applyTransform(myMatrix, "test5", 0.2)
 time.sleep(3)
 ledHelper.clearLEDs()
 ledHelper.applyTransform(myMatrix, "test6", 0.2)
+time.sleep(3)
+ledHelper.clearLEDs()
+ledHelper.applyTransform(myMatrix, "test7", 0.2)
 
 while True:
 	time.sleep(1)
