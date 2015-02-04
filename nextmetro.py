@@ -141,7 +141,7 @@ def updateDisplay():
 	elif (nextTime < 10 and nextTime > 5):
 		# Pushing it
 		r = 255
-		g = 255
+		g = 140
 
 		# Show the time remaining
 		if (nextTime == 9):
