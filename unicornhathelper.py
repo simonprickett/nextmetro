@@ -208,15 +208,15 @@ def applyTransform(ledMatrix, transformName, paintDelay):
 
 	# Check transformName is valid
 	#TODO
-	if (transformName = "test1"):
+	if (transformName == "test1"):
 		transformMatrix = _testTransform1
-	elif (transformName = "test2"):
+	elif (transformName == "test2"):
 		transformMatrix = _testTransform2
-	elif (transformName = "test3"):
+	elif (transformName == "test3"):
 		transformMatrix = _testTransform3
-	elif (transformName = "test4"):
+	elif (transformName == "test4"):
 		transformMatrix = _testTransform4
-	elif (transformName = "test5"):
+	elif (transformName == "test5"):
 		transformMatrix = _testTransform5
 
 
